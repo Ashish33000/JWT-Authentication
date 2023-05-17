@@ -1,0 +1,48 @@
+package com.masai.Controll;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.masai.Service.CustomerService;
+import com.masai.model.Customer;
+
+@RestController
+public class CustomerController {
+	@Autowired
+	private CustomerService cs;
+	@Autowired
+	private PasswordEncoder ps;
+	
+	@ResponseStatus(code = HttpStatus.OK)
+	@GetMapping("/hello")
+	public String sayHello() {
+		return "welcome to String Security";
+	}
+	
+	@ResponseStatus(code = HttpStatus.CREATED)
+	@PostMapping("/customers")
+	public Customer registerCustomer(@RequestBody  Customer customer) {
+		customer.setPassword(ps.encode(customer.getPassword()));
+		return cs.registerCustomer(customer);
+	}
+	@ResponseStatus(code = HttpStatus.OK)
+	@GetMapping("/customers/{email}")
+	public Customer getCustomerByEmail(@PathVariable String email) {
+		return cs.getCustomerByEmail(email);
+	}
+	@ResponseStatus(code = HttpStatus.OK)
+	@GetMapping("/customers")
+	public List<Customer> getAllCustomer(){
+		return cs.getAllCustomer();
+	}
+
+}
